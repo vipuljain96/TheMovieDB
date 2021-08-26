@@ -17,6 +17,7 @@ class CustomCell: UITableViewCell {
     //MARK : IBOutlet for Editing Cell Contents
     
     @IBOutlet weak var titleLabel: UILabel!
+
     @IBOutlet weak var popularityLabel: UILabel!
     @IBOutlet weak var movieImageLabel: UIImageView!
     @IBOutlet weak var releaseYearLabel: UILabel!

@@ -7,6 +7,23 @@
 
 import UIKit
 
-class MovieModel: NSObject {
+//MARK: Structutre Definition
+struct Movies{
+    
+    //Defining Variables
+    var movieName: String?
+    var image: String?
+    var releaseYear: Int?
+    var popScore: Double?
+}
 
+struct MovieResult : Codable{
+    var results: [Movie]?
+}
+
+struct Movie : Codable{
+    var title: String?
+    var popularity: Double?
+    var release_date: String?
+    var backdrop_path: String?
 }

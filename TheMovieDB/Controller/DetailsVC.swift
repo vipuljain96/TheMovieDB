@@ -9,9 +9,28 @@ import UIKit
 
 class DetailsVC: UIViewController {
 
+    var detailtitle: Movie?
+    
+    
+    @IBOutlet weak var detailsImageLabel: UIImageView!
+    @IBOutlet weak var detailsTitleView: UILabel!
+    @IBOutlet weak var detailsPopularityLabel: UILabel!
+    @IBOutlet weak var detailsReleaseLabel: UILabel!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        detailsTitleView.text = detailtitle?.title
+        detailsPopularityLabel.text = "Popularity Score: " + String(detailtitle?.popularity ?? 0)
+        detailsReleaseLabel.text = "Release Year: " + ((detailtitle?.release_date) ?? "")
+        let urlImage = URL(string: Constant.base_url.rawValue + ((detailtitle?.backdrop_path) ?? ""))
+        DispatchQueue.global().async {
+            let data = try? Data(contentsOf: urlImage!)
+            DispatchQueue.main.async {
+                self.detailsImageLabel.image = UIImage(data: data!)
+            }
+        }
+        
+        
         // Do any additional setup after loading the view.
     }
     
