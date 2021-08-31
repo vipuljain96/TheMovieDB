@@ -22,26 +22,32 @@ class MovieVC: UIViewController, UITableViewDataSource,UITableViewDelegate {
 //    }
     
     var movieList:[Movie]?
+    var vm = MovieDBViewModel()
     
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
   
     @IBOutlet weak var objTableView: UITableView!
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        movieList = []
-        
-        
-        let objNetworking = Networking()
-        
-        activityIndicator.startAnimating()
-        objNetworking.response(url: Constant.server_base_url.rawValue) {(movieResult) in
-            self.movieList = movieResult.results
+        vm.getMovieList {
             DispatchQueue.main.async {
                 self.objTableView.reloadData()
                 self.activityIndicator.stopAnimating()
             }
         }
+        
+        //movieList = []
+        
+//        let objNetworking = Networking()
+//        
+//        activityIndicator.startAnimating()
+//        objNetworking.response(url: Constant.server_base_url.rawValue) {(movieResult) in
+//            self.movieList = movieResult.results
+//            DispatchQueue.main.async {
+//                self.objTableView.reloadData()
+//                self.activityIndicator.stopAnimating()
+//            }
+//        }
         
     }
     
@@ -50,7 +56,7 @@ class MovieVC: UIViewController, UITableViewDataSource,UITableViewDelegate {
     
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return movieList?.count ?? 0
+        return vm.getTotalMovies() ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -70,13 +76,13 @@ class MovieVC: UIViewController, UITableViewDataSource,UITableViewDelegate {
         
         //Creating a cell to modify the entries within it
         
-       
-        
         let cell = tableView.dequeueReusableCell(withIdentifier: "CustomCell") as? CustomCell
         
-        cell?.titleLabel.text = movieList?[indexPath.row].title ?? ""
+        cell?.titleLabel.text = vm.getMovie(for: indexPath.row)?.title ?? ""
         
-        let urlImage = URL(string: Constant.base_url.rawValue + ((movieList?[indexPath.row].backdrop_path) ?? ""))
+//        cell?.titleLabel.text = movieList?[indexPath.row].title ?? ""
+//
+        let urlImage = URL(string: Constant.base_url.rawValue + ((vm.getMovie(for: indexPath.row)?.backdrop_path) ?? ""))
 
         DispatchQueue.global().async {
             let data = try? Data(contentsOf: urlImage!)
@@ -84,25 +90,25 @@ class MovieVC: UIViewController, UITableViewDataSource,UITableViewDelegate {
                 cell?.movieImageLabel.image = UIImage(data: data!)
             }
         }
-        
+
         //cell?.movieImageLabel.image = UIImage(named: movieList[indexPath.row].image!)
-        cell?.popularityLabel.text = "Popularity Score: " + String((movieList?[indexPath.row].popularity ?? 0))
-        cell?.releaseYearLabel.text = "Release Year: " + String((movieList?[indexPath.row].release_date ?? ""))
+        cell?.popularityLabel.text = "Popularity Score: " + String((vm.getMovie(for: indexPath.row)?.popularity ?? 0))
+        cell?.releaseYearLabel.text = "Release Year: " + String((vm.getMovie(for: indexPath.row)?.release_date ?? ""))
         
         return cell!
     }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 190.0
     }
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-
-        var objSelectedMovie =  movieList?[indexPath.row]
-
-        let objDetailsVC: DetailsVC =  self.storyboard?.instantiateViewController(identifier: "DetailsVC") as! DetailsVC
-        
-        objDetailsVC.detailtitle = objSelectedMovie
-        navigationController?.pushViewController(objDetailsVC, animated: true)
-        
+//    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+//
+//        var objSelectedMovie =  movieList?[indexPath.row]
+//
+//        let objDetailsVC: DetailsVC =  self.storyboard?.instantiateViewController(identifier: "DetailsVC") as! DetailsVC
+//
+//        objDetailsVC.detailtitle = objSelectedMovie
+//        navigationController?.pushViewController(objDetailsVC, animated: true)
+//    }
 //        if let objDetailsVC = objDetailsVC{
 //            objDetailsVC.detailsTitleView.text = objSelectedMovie?.title
 //            objDetailsVC.detailsPopularityLabel.text = String(objSelectedMovie?.popularity ?? 0)
@@ -118,7 +124,7 @@ class MovieVC: UIViewController, UITableViewDataSource,UITableViewDelegate {
         
 
 }
-}
+
 // Do any additional setup after lading the view
 
 
